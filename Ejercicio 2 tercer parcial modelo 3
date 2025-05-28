@@ -1,0 +1,109 @@
+#include <iostream>
+using namespace std;
+
+// Clase Dato representa un pedido y también es un nodo
+class Dato {
+public:
+    int id;
+    string descripcion;
+    Dato* siguiente;
+
+    Dato(int _id = 0, string _descripcion = "") {
+        id = _id;
+        descripcion = _descripcion;
+        siguiente = nullptr;
+    }
+};
+
+// Clase ListaPedidos gestiona la lista enlazada
+class ListaPedidos {
+private:
+    Dato* cabeza;
+
+public:
+    ListaPedidos() {
+        cabeza = nullptr;
+    }
+
+    // Insertar al final
+    void insertarAlFinal(int id, string descripcion) {
+        Dato* nuevo = new Dato(id, descripcion);
+        if (cabeza == nullptr) {
+            cabeza = nuevo;
+        } else {
+            Dato* actual = cabeza;
+            while (actual->siguiente != nullptr) {
+                actual = actual->siguiente;
+            }
+            actual->siguiente = nuevo;
+        }
+        cout << "Pedido agregado: " << id << " - " << descripcion << endl;
+    }
+
+    // Eliminar por ID
+    void eliminarPorId(int id) {
+        if (cabeza == nullptr) {
+            cout << "La lista está vacía.\n";
+            return;
+        }
+
+        if (cabeza->id == id) {
+            Dato* temp = cabeza;
+            cabeza = cabeza->siguiente;
+            delete temp;
+            cout << "Pedido con ID " << id << " eliminado.\n";
+            return;
+        }
+
+        Dato* actual = cabeza;
+        Dato* anterior = nullptr;
+
+        while (actual != nullptr && actual->id != id) {
+            anterior = actual;
+            actual = actual->siguiente;
+        }
+
+        if (actual == nullptr) {
+            cout << "Pedido con ID " << id << " no encontrado.\n";
+        } else {
+            anterior->siguiente = actual->siguiente;
+            delete actual;
+            cout << "Pedido con ID " << id << " eliminado.\n";
+        }
+    }
+
+    // Mostrar la lista
+    void mostrarLista() {
+        if (cabeza == nullptr) {
+            cout << "No hay pedidos en la lista.\n";
+            return;
+        }
+
+        Dato* actual = cabeza;
+        cout << "Lista de pedidos:\n";
+        while (actual != nullptr) {
+            cout << "ID: " << actual->id << ", Descripción: " << actual->descripcion << endl;
+            actual = actual->siguiente;
+        }
+    }
+};
+
+// Función principal
+int main() {
+    ListaPedidos lista;
+
+    lista.insertarAlFinal(1, "Aceite vegetal 1L");
+    lista.insertarAlFinal(2, "Aceite de oliva 500ml");
+    lista.insertarAlFinal(3, "Aceite de coco 250ml");
+
+    cout << endl;
+    lista.mostrarLista();
+
+    cout << "\nEliminando el pedido con ID 2...\n";
+    lista.eliminarPorId(2);
+
+    cout << endl;
+    lista.mostrarLista();
+
+    return 0;
+}
